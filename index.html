@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+<title>Les Îles</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #47aba9; overflow: hidden; }
+  #c { width: 100vw; height: 100vh; display: block; }
+  #load { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column;
+          font: bold 22px system-ui, sans-serif; color: #fff4e0; text-shadow: 0 2px 0 #33241a; gap: 14px; }
+  #bar { width: min(320px, 80vw); height: 16px; border: 3px solid #33241a; border-radius: 8px; background: #2a1d18; overflow: hidden; }
+  #fill { height: 100%; width: 0; background: #ffd84a; }
+  #keys { font-size: 15px; line-height: 1.6; text-align: center; padding: 0 16px; width: 100%; max-width: 760px; box-sizing: border-box; }
+  #keys .k { white-space: nowrap; }
+  #keys b { display: inline-block; margin: 2px 1px; min-width: 1.4em; padding: 0 6px; border: 2px solid #33241a; border-radius: 6px;
+            background: #fff4e0; color: #33241a; text-shadow: none; font-size: 13px; }
+</style>
+</head>
+<body>
+<canvas id="c" tabindex="-1"></canvas>
+<div id="load">
+  <div>Les Îles</div>
+  <div id="bar"><div id="fill"></div></div>
+  <div id="keys">
+    Bouger : <span class="k"><b>Z</b> <b>Q</b> <b>S</b> <b>D</b></span> ou <span class="k"><b>W</b> <b>A</b> <b>S</b> <b>D</b></span> ou les flèches, ou glisse avec la souris<br>
+    <b>Espace</b> parler, couper, miner, frapper · aide le chef à réparer le pont
+  </div>
+</div>
+<script src="Build/WebGL.loader.js"></script>
+<script>
+  createUnityInstance(document.querySelector("#c"), {
+    dataUrl: "Build/WebGL.data", frameworkUrl: "Build/WebGL.framework.js", codeUrl: "Build/WebGL.wasm",
+    companyName: "charlit", productName: "LesIles", productVersion: "0.1",
+  }, p => document.querySelector("#fill").style.width = (p * 100) + "%")
+  .then(() => document.querySelector("#load").remove())
+  .catch(e => document.querySelector("#load").textContent = e);
+</script>
+</body>
+</html>
