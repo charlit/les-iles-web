@@ -6,7 +6,7 @@
 <title>Les Îles</title>
 <style>
   html, body { margin: 0; height: 100%; background: #47aba9; overflow: hidden; }
-  #c { width: 100vw; height: 100vh; display: block; }
+  #c { width: 100vw; height: 100vh; height: 100dvh; display: block; touch-action: none; }   /* dvh : la barre d'adresse du téléphone ne coupe pas le jeu */
   #load { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column;
           font: bold 22px system-ui, sans-serif; color: #fff4e0; text-shadow: 0 2px 0 #33241a; gap: 14px; }
   #bar { width: min(320px, 80vw); height: 16px; border: 3px solid #33241a; border-radius: 8px; background: #2a1d18; overflow: hidden; }
@@ -15,6 +15,14 @@
   #keys .k { white-space: nowrap; }
   #keys b { display: inline-block; margin: 2px 1px; min-width: 1.4em; padding: 0 6px; border: 2px solid #33241a; border-radius: 6px;
             background: #fff4e0; color: #33241a; text-shadow: none; font-size: 13px; }
+  #keys .touch { display: none; }
+  #turn { display: none; position: fixed; inset: 0; z-index: 10; background: #47aba9; color: #fff4e0; font: bold 22px system-ui, sans-serif;
+          text-shadow: 0 2px 0 #33241a; align-items: center; justify-content: center; flex-direction: column; gap: 14px; text-align: center; padding: 24px; box-sizing: border-box; }
+  #turn .phone { font-size: 64px; animation: turn 1.8s ease-in-out infinite; }
+  @keyframes turn { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
+  /* téléphone ou tablette : aide au doigt, et le jeu se joue en paysage */
+  @media (pointer: coarse) { #keys .desk { display: none; } #keys .touch { display: inline; } }
+  @media (pointer: coarse) and (orientation: portrait) { #turn { display: flex; } }
 </style>
 </head>
 <body>
@@ -22,19 +30,28 @@
 <div id="load">
   <div>Les Îles</div>
   <div id="bar"><div id="fill"></div></div>
-  <div id="keys">
+  <div id="keys"><span class="desk">
     Bouger : <span class="k"><b>Z</b> <b>Q</b> <b>S</b> <b>D</b></span> ou <span class="k"><b>W</b> <b>A</b> <b>S</b> <b>D</b></span> ou les flèches, ou glisse avec la souris<br>
     <b>Espace</b> parler, couper, miner, frapper · aide le chef à réparer le pont
+  </span><span class="touch">Pose le doigt n'importe où et glisse pour marcher · le gros bouton rouge sert à parler, couper, miner et frapper</span>
   </div>
 </div>
-<script src="Build/462fe8eb7b6e64910886387b633f3253.loader.js"></script>
+<div id="turn"><div class="phone">📱</div>Tourne ton téléphone<br>pour jouer en paysage</div>
+<script src="Build/74584a004bbc4d7c3099d8e63146a35f.loader.js"></script>
 <script>
   createUnityInstance(document.querySelector("#c"), {
-    dataUrl: "Build/96013c220fbabc898bbcbf62cb05e060.data", frameworkUrl: "Build/c53fadea4554a98ebc5072b292b7fcfa.framework.js", codeUrl: "Build/5b277ce892c2f26b7cd320e035d60cb2.wasm",
+    dataUrl: "Build/285a7c70f60bc96ce23ff387ab8f4621.data", frameworkUrl: "Build/c53fadea4554a98ebc5072b292b7fcfa.framework.js", codeUrl: "Build/c1cffeb85c2975409041c38746eb68d9.wasm",
+    devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),   // écrans de téléphone très fins : 2 suffit, le jeu reste fluide
     companyName: "charlit", productName: "LesIles", productVersion: "0.1",
   }, p => document.querySelector("#fill").style.width = (p * 100) + "%")
   .then(() => document.querySelector("#load").remove())
   .catch(e => document.querySelector("#load").textContent = e);
+  // téléphone Android : au premier toucher, plein écran et paysage (sans effet sur iPhone, qui ne le permet pas)
+  if (matchMedia("(pointer: coarse)").matches) document.addEventListener("touchend", function fs() {
+    document.removeEventListener("touchend", fs);
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen().then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock("landscape")).catch(() => {});
+  });
 </script>
 </body>
 </html>
